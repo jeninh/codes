@@ -184,7 +184,7 @@ app.post('/api/redeem', rateLimit('redeem', 5, 600000), async (req, res) => {
     city,
     state,
     postal_code,
-    country,
+    country: country.toUpperCase(),
     recipient_email: email,
     mail_type: entry.mail_type,
     rubber_stamps: entry.rubber_stamps,
@@ -222,6 +222,7 @@ app.post('/api/redeem', rateLimit('redeem', 5, 600000), async (req, res) => {
         status: hermesData.status
       });
     } else {
+      console.error('Hermes rejected:', hermesRes.status, hermesData);
       res.status(hermesRes.status).json({ error: 'Fulfillment request failed' });
     }
   } catch (err) {
