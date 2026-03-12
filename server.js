@@ -180,16 +180,17 @@ app.post('/api/redeem', rateLimit('redeem', 5, 600000), async (req, res) => {
     first_name,
     last_name,
     address_line_1,
-    address_line_2,
     city,
     state,
     postal_code,
     country: country.toUpperCase(),
-    recipient_email: email,
     mail_type: entry.mail_type,
     rubber_stamps: entry.rubber_stamps,
     notes: `Redeemed via CODES - code: ${upperCode}`
   };
+
+  if (address_line_2?.trim()) body.address_line_2 = address_line_2.trim();
+  if (email?.trim()) body.recipient_email = email.trim();
 
   if (entry.weight_grams) {
     body.weight_grams = entry.weight_grams;
@@ -222,7 +223,7 @@ app.post('/api/redeem', rateLimit('redeem', 5, 600000), async (req, res) => {
         status: hermesData.status
       });
     } else {
-      console.error('Hermes rejected:', hermesRes.status, hermesData);
+      console.error('Hermes rejected:', hermesRes.status, JSON.stringify(hermesData, null, 2));
       res.status(hermesRes.status).json({ error: 'Fulfillment request failed' });
     }
   } catch (err) {
