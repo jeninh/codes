@@ -185,7 +185,7 @@ app.post('/api/redeem', rateLimit('redeem', 5, 600000), async (req, res) => {
     postal_code,
     country: country.toUpperCase(),
     mail_type: entry.mail_type,
-    rubber_stamps: entry.rubber_stamps,
+    rubber_stamps: Array.isArray(entry.rubber_stamps) ? entry.rubber_stamps.join(', ') : entry.rubber_stamps,
     notes: `Redeemed via CODES - code: ${upperCode}`
   };
 
