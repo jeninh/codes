@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CODES — Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --base: #0a0a0f;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-hover: rgba(255, 255, 255, 0.07);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-light: rgba(255, 255, 255, 0.12);
+      --text: #e4e4e7;
+      --text-dim: #71717a;
+      --cyan: #00d4ff;
+      --cyan-dim: rgba(0, 212, 255, 0.15);
+      --purple: #8b5cf6;
+      --purple-dim: rgba(139, 92, 246, 0.15);
+      --green: #22c55e;
+      --green-dim: rgba(34, 197, 94, 0.15);
+      --red: #ef4444;
+      --red-dim: rgba(239, 68, 68, 0.15);
+      --orange: #f59e0b;
+      --orange-dim: rgba(245, 158, 11, 0.15);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--base);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Top bar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: rgba(10, 10, 15, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .admin-badge {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--purple-dim);
+      color: var(--purple);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-logout {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+      background: var(--surface);
+      color: var(--text-dim);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Main layout */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      backdrop-filter: blur(12px);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .stat-value.total { color: var(--cyan); }
+    .stat-value.available { color: var(--green); }
+    .stat-value.redeemed { color: var(--purple); }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title::before {
+      content: '';
+      width: 3px;
+      height: 18px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, var(--cyan), var(--purple));
+    }
+
+    /* Form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-dim);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-light);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px var(--cyan-dim);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2371717a' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    .form-group select option {
+      background: #1a1a2e;
+      color: var(--text);
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 4px;
+    }
+
+    /* Buttons */
+    .btn {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(0, 212, 255, 0.25);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-sm {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+
+    .btn-danger {
+      background: var(--red-dim);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    .btn-warning {
+      background: var(--orange-dim);
+      color: var(--orange);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .btn-warning:hover {
+      background: rgba(245, 158, 11, 0.25);
+    }
+
+    /* Table */
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-dim);
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-light);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tbody tr:hover {
+      background: var(--surface-hover);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .code-cell {
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      font-family: 'Courier New', monospace;
+    }
+
+    .contents-cell {
+      max-width: 220px;
+      font-size: 12px;
+      color: var(--text-dim);
+      white-space: pre-line;
+      word-break: break-word;
+    }
+
+    .mail-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--surface-hover);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .status-available {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .status-redeemed {
+      background: var(--red-dim);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .redeemed-info {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .redeemed-info a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .redeemed-info a:hover {
+      text-decoration: underline;
+    }
+
+    .date-cell {
+      font-size: 12px;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-dim);
+    }
+
+    .empty-state-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+
+    .empty-state-text {
+      font-size: 14px;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      backdrop-filter: blur(12px);
+      animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
+      max-width: 360px;
+      word-break: break-word;
+    }
+
+    .toast-success {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+    }
+
+    .toast-error {
+      background: var(--red-dim);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toast-out {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border-light);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-row td {
+      text-align: center;
+      padding: 32px;
+      color: var(--text-dim);
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        padding: 12px 16px;
+      }
+
+      .container {
+        padding: 16px 12px 40px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar">
+    <div class="topbar-left">
+      <span class="logo">CODES</span>
+      <span class="admin-badge">Admin Panel</span>
+    </div>
+    <div class="topbar-right">
+      <a href="/admin/logout" class="btn-logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Stats -->
+    <div class="stats-row" id="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Codes</div>
+        <div class="stat-value total" id="stat-total">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Available</div>
+        <div class="stat-value available" id="stat-available">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Redeemed</div>
+        <div class="stat-value redeemed" id="stat-redeemed">—</div>
+      </div>
+    </div>
+
+    <!-- Create Code -->
+    <div class="card">
+      <div class="card-title">Create Code</div>
+      <form id="create-form" class="form-grid" autocomplete="off">
+        <div class="form-group">
+          <label for="code">Code</label>
+          <input type="text" id="code" name="code" required placeholder="e.g. WELCOME2025" style="text-transform: uppercase;">
+        </div>
+        <div class="form-group">
+          <label for="mail_type">Mail Type</label>
+          <select id="mail_type" name="mail_type" required>
+            <option value="lettermail">Lettermail</option>
+            <option value="bubble_packet">Bubble Packet</option>
+            <option value="parcel">Parcel</option>
+          </select>
+        </div>
+        <div class="form-group full-width" id="weight-group" style="display: none;">
+          <label for="weight_grams">Weight (grams)</label>
+          <input type="number" id="weight_grams" name="weight_grams" min="1" placeholder="e.g. 250">
+        </div>
+        <div class="form-group full-width">
+          <label for="rubber_stamps">Rubber Stamps (one per line)</label>
+          <textarea id="rubber_stamps" name="rubber_stamps" required placeholder="stamp-one&#10;stamp-two&#10;stamp-three"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="create-btn">Create Code</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Codes List -->
+    <div class="card">
+      <div class="card-title">All Codes</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Contents</th>
+              <th>Mail Type</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="codes-body">
+            <tr class="loading-row"><td colspan="6"><span class="spinner"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+    const mailTypeSelect = $('#mail_type');
+    const weightGroup = $('#weight-group');
+    const createForm = $('#create-form');
+    const createBtn = $('#create-btn');
+    const codesBody = $('#codes-body');
+
+    // Toggle weight field visibility
+    mailTypeSelect.addEventListener('change', () => {
+      const needs = ['bubble_packet', 'parcel'].includes(mailTypeSelect.value);
+      weightGroup.style.display = needs ? '' : 'none';
+      $('#weight_grams').required = needs;
+    });
+
+    // Toast system
+    function toast(message, type = 'success') {
+      const el = document.createElement('div');
+      el.className = `toast toast-${type}`;
+      el.textContent = message;
+      $('#toast-container').appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    // Format date
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+        ' ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Format mail type for display
+    function fmtMailType(t) {
+      return t ? t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '—';
+    }
+
+    // Escape HTML
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    // Load codes
+    async function loadCodes() {
+      try {
+        const res = await fetch('/api/admin/codes');
+        if (!res.ok) throw new Error('Failed to load');
+        const data = await res.json();
+
+        // data is { CODE: { rubber_stamps, mail_type, redeemed, ... }, ... }
+        const entries = Object.entries(data);
+
+        // Update stats
+        const total = entries.length;
+        const redeemed = entries.filter(([, v]) => v.redeemed).length;
+        const available = total - redeemed;
+
+        $('#stat-total').textContent = total;
+        $('#stat-available').textContent = available;
+        $('#stat-redeemed').textContent = redeemed;
+
+        if (entries.length === 0) {
+          codesBody.innerHTML = `
+            <tr><td colspan="6">
+              <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <div class="empty-state-text">No codes yet. Create one above!</div>
+              </div>
+            </td></tr>`;
+          return;
+        }
+
+        // Sort: available first, then by created_at desc
+        entries.sort((a, b) => {
+          if (a[1].redeemed !== b[1].redeemed) return a[1].redeemed ? 1 : -1;
+          return (new Date(b[1].created_at || 0)) - (new Date(a[1].created_at || 0));
+        });
+
+        codesBody.innerHTML = entries.map(([code, entry]) => {
+          const stamps = Array.isArray(entry.rubber_stamps)
+            ? entry.rubber_stamps.join('\n')
+            : (entry.rubber_stamps || '');
+          const isRedeemed = !!entry.redeemed;
+
+          let statusHtml = isRedeemed
+            ? `<span class="status-badge status-redeemed">Redeemed</span>`
+            : `<span class="status-badge status-available">Available</span>`;
+
+          if (isRedeemed) {
+            let info = '';
+            if (entry.redeemed_at) info += fmtDate(entry.redeemed_at);
+            if (entry.redeemed_by) info += (info ? ' · ' : '') + esc(entry.redeemed_by);
+            if (entry.letter_id) info += (info ? '<br>' : '') +
+              `<a href="https://fulfillment.hackclub.com/letters/${esc(entry.letter_id)}" target="_blank">Letter #${esc(entry.letter_id)}</a>`;
+            if (info) statusHtml += `<div class="redeemed-info">${info}</div>`;
+          }
+
+          const weightInfo = entry.weight_grams ? ` (${entry.weight_grams}g)` : '';
+
+          let actionsHtml = `<button class="btn btn-sm btn-danger" onclick="deleteCode('${esc(code)}')">Delete</button>`;
+          if (isRedeemed) {
+            actionsHtml += ` <button class="btn btn-sm btn-warning" onclick="resetCode('${esc(code)}')">Reset</button>`;
+          }
+
+          return `<tr>
+            <td class="code-cell">${esc(code)}</td>
+            <td class="contents-cell">${esc(stamps)}</td>
+            <td><span class="mail-badge">${fmtMailType(entry.mail_type)}${esc(weightInfo)}</span></td>
+            <td>${statusHtml}</td>
+            <td class="date-cell">${fmtDate(entry.created_at)}</td>
+            <td><div class="actions-cell">${actionsHtml}</div></td>
+          </tr>`;
+        }).join('');
+      } catch (err) {
+        codesBody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--red)">Failed to load codes</td></tr>`;
+        toast('Failed to load codes', 'error');
+      }
+    }
+
+    // Create code
+    createForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      createBtn.disabled = true;
+
+      const code = $('#code').value.trim().toUpperCase();
+      const rubber_stamps = $('#rubber_stamps').value.trim().split('\n').map(s => s.trim()).filter(Boolean);
+      const mail_type = mailTypeSelect.value;
+      const weight_grams = $('#weight_grams').value ? parseInt($('#weight_grams').value) : undefined;
+
+      if (!code || rubber_stamps.length === 0) {
+        toast('Code and rubber stamps are required', 'error');
+        createBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const body = { code, rubber_stamps, mail_type };
+        if (weight_grams) body.weight_grams = weight_grams;
+
+        const res = await fetch('/api/admin/codes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || 'Failed to create code');
+        }
+
+        toast(`Code ${code} created!`);
+        createForm.reset();
+        weightGroup.style.display = 'none';
+        loadCodes();
+      } catch (err) {
+        toast(err.message, 'error');
+      } finally {
+        createBtn.disabled = false;
+      }
+    });
+
+    // Delete code
+    async function deleteCode(code) {
+      if (!confirm(`Delete code "${code}"? This cannot be undone.`)) return;
+
+      try {
+        const res = await fetch(`/api/admin/codes/${encodeURIComponent(code)}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || 'Failed to delete');
+        }
+        toast(`Code ${code} deleted`);
+        loadCodes();
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    }
+
+    // Reset code
+    async function resetCode(code) {
+      if (!confirm(`Reset code "${code}" back to available? This will un-redeem it.`)) return;
+
+      try {
+        const res = await fetch(`/api/admin/codes/${encodeURIComponent(code)}/reset`, { method: 'POST' });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || 'Failed to reset');
+        }
+        toast(`Code ${code} reset to available`);
+        loadCodes();
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    }
+
+    // Initial load
+    loadCodes();
+  </script>
+</body>
+</html>

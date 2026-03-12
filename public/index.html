@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CODES</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b0b;
+  --card:#111;
+  --border:#1e1e1e;
+  --text:#e0e0e0;
+  --text-dim:#555;
+  --accent:#fff;
+  --danger:#e55;
+  --success:#5c6;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',system-ui,sans-serif;
+}
+html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--text)}
+
+.app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+
+.card{width:100%;max-width:460px}
+
+.logo{
+  font-family:var(--mono);font-size:32px;font-weight:700;
+  letter-spacing:6px;color:var(--accent);
+  margin-bottom:4px;
+}
+.subtitle{color:var(--text-dim);font-size:13px;margin-bottom:36px}
+
+/* steps */
+.step{display:none;animation:fadeIn 0.3s ease}
+.step.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* inputs */
+.field{margin-bottom:14px}
+.field-row{display:flex;gap:10px}
+.field-row .field{flex:1}
+label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:5px;font-weight:500}
+label .req{color:var(--accent)}
+label .opt{font-weight:400;font-size:11px}
+input,select{
+  width:100%;height:42px;padding:0 12px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:6px;color:var(--text);
+  font-family:var(--sans);font-size:14px;
+  outline:none;transition:border-color 0.15s;
+  -webkit-appearance:none;appearance:none;
+}
+select{
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%23555' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+input::placeholder{color:var(--text-dim);opacity:0.6}
+input:focus,select:focus{border-color:#444}
+
+.code-input{
+  height:52px;font-size:18px;font-weight:600;font-family:var(--mono);
+  letter-spacing:3px;text-align:center;text-transform:uppercase;
+  margin-bottom:20px;
+}
+.code-input.shake{animation:shake 0.35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
+
+/* buttons */
+.btn{
+  width:100%;height:44px;border:none;border-radius:6px;
+  font-family:var(--sans);font-size:14px;font-weight:600;
+  cursor:pointer;transition:opacity 0.15s;
+}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-primary:hover{opacity:0.85}
+.btn-primary:active{opacity:0.7}
+.btn-primary:disabled{opacity:0.3;cursor:not-allowed}
+
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.2);border-top-color:var(--bg);border-radius:50%;animation:spin 0.5s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.error-msg{color:var(--danger);font-size:12px;margin-top:6px;text-align:center;min-height:18px}
+
+.toast{
+  position:fixed;top:20px;right:20px;z-index:100;
+  background:#181818;border:1px solid #222;border-radius:6px;
+  padding:12px 18px;color:var(--danger);font-size:13px;font-weight:500;
+  transform:translateX(120%);transition:transform 0.3s ease;
+}
+.toast.show{transform:translateX(0)}
+.toast.toast-success{color:var(--success)}
+
+/* package card */
+.package-card{
+  border:1px solid var(--border);border-radius:8px;
+  padding:16px;margin-bottom:24px;text-align:center;
+}
+.package-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:4px}
+.package-text{font-size:16px;font-weight:600;color:var(--accent)}
+
+.section-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+/* success */
+.success-icon{font-size:40px;text-align:center;margin-bottom:12px}
+.success-title{font-size:20px;font-weight:700;text-align:center;color:var(--accent);margin-bottom:4px}
+.success-sub{text-align:center;color:var(--text-dim);font-size:13px}
+.success-id{
+  text-align:center;font-family:var(--mono);font-size:12px;
+  color:var(--text-dim);background:#151515;
+  border-radius:6px;padding:10px;margin-top:14px;word-break:break-all;
+}
+
+@media(max-width:500px){.card{max-width:100%}.app{padding:20px 16px}}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<div class="app">
+  <div class="card">
+    <div class="logo">CODES</div>
+
+    <!-- Step 1 -->
+    <div class="step active" id="step1">
+      <p class="subtitle">Enter your code to claim your package</p>
+      <input type="text" id="codeInput" class="code-input" placeholder="ENTER CODE" autocomplete="off" spellcheck="false">
+      <div class="error-msg" id="codeError"></div>
+      <button class="btn btn-primary" id="redeemBtn" onclick="validateCode()">Redeem</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step" id="step2">
+      <div class="package-card">
+        <div class="package-label">Package Contents</div>
+        <div class="package-text" id="packageContents"></div>
+      </div>
+      <div class="section-title">Shipping Details</div>
+      <div class="field-row">
+        <div class="field"><label>First Name <span class="req">*</span></label><input type="text" id="firstName" placeholder="Jane"></div>
+        <div class="field"><label>Last Name <span class="req">*</span></label><input type="text" id="lastName" placeholder="Doe"></div>
+      </div>
+      <div class="field"><label>Email <span class="opt">(optional)</span></label><input type="email" id="email" placeholder="jane@example.com"></div>
+      <div class="field"><label>Address Line 1 <span class="req">*</span></label><input type="text" id="address1" placeholder="123 Main Street"></div>
+      <div class="field"><label>Address Line 2 <span class="opt">(optional)</span></label><input type="text" id="address2" placeholder="Apt, Suite, Unit"></div>
+      <div class="field-row">
+        <div class="field"><label>City <span class="req">*</span></label><input type="text" id="city" placeholder="New York"></div>
+        <div class="field"><label>State <span class="req">*</span></label><input type="text" id="state" placeholder="NY"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Postal Code <span class="req">*</span></label><input type="text" id="postalCode" placeholder="10001"></div>
+        <div class="field">
+          <label>Country <span class="req">*</span></label>
+          <select id="country">
+            <option value="US">United States</option><option value="CA">Canada</option><option value="GB">United Kingdom</option>
+            <option value="AU">Australia</option><option value="DE">Germany</option><option value="FR">France</option>
+            <option value="JP">Japan</option><option value="KR">South Korea</option><option value="BR">Brazil</option>
+            <option value="MX">Mexico</option><option value="IN">India</option><option value="NL">Netherlands</option>
+            <option value="SE">Sweden</option><option value="NO">Norway</option><option value="NZ">New Zealand</option>
+            <option value="SG">Singapore</option><option value="IT">Italy</option><option value="ES">Spain</option>
+          </select>
+        </div>
+      </div>
+      <div class="error-msg" id="shippingError"></div>
+      <button class="btn btn-primary" id="claimBtn" onclick="submitRedeem()" style="margin-top:8px">Claim Package</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step" id="step3">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Code Redeemed</div>
+      <div class="success-sub">Your package is on its way.</div>
+      <div class="success-id" id="letterId" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentCode='',codeData=null;
+
+function showToast(msg,success){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(success?' toast-success':'')+' show';
+  setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+function goToStep(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  const target=document.getElementById('step'+n);
+  void target.offsetWidth;
+  target.classList.add('active');
+}
+
+async function validateCode(){
+  const input=document.getElementById('codeInput'),btn=document.getElementById('redeemBtn'),err=document.getElementById('codeError');
+  const code=input.value.trim();
+  if(!code){input.classList.add('shake');err.textContent='Please enter a code';setTimeout(()=>input.classList.remove('shake'),400);return}
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Validating';err.textContent='';
+  try{
+    const res=await fetch('/api/validate-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
+    const data=await res.json();
+    if(!res.ok||!data.valid){input.classList.add('shake');err.textContent=data.error||'Invalid code';setTimeout(()=>input.classList.remove('shake'),400);btn.disabled=false;btn.textContent='Redeem';return}
+    currentCode=code;codeData=data;
+    document.getElementById('packageContents').textContent=data.contents?.rubber_stamps||'Package';
+    goToStep(2);
+  }catch(e){input.classList.add('shake');err.textContent='Connection error';setTimeout(()=>input.classList.remove('shake'),400)}
+  finally{btn.disabled=false;btn.textContent='Redeem'}
+}
+
+async function submitRedeem(){
+  const btn=document.getElementById('claimBtn'),err=document.getElementById('shippingError');
+  const f={firstName:document.getElementById('firstName').value.trim(),lastName:document.getElementById('lastName').value.trim(),email:document.getElementById('email').value.trim(),address1:document.getElementById('address1').value.trim(),address2:document.getElementById('address2').value.trim(),city:document.getElementById('city').value.trim(),state:document.getElementById('state').value.trim(),postalCode:document.getElementById('postalCode').value.trim(),country:document.getElementById('country').value};
+  for(const k of['firstName','lastName','address1','city','state','postalCode']){if(!f[k]){err.textContent='Please fill in all required fields';return}}
+  err.textContent='';btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Submitting';
+  try{
+    const res=await fetch('/api/redeem',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:currentCode,first_name:f.firstName,last_name:f.lastName,email:f.email,address_line_1:f.address1,address_line_2:f.address2,city:f.city,state:f.state,postal_code:f.postalCode,country:f.country})});
+    const data=await res.json();
+    if(!res.ok||data.error){err.textContent=data.error||'Something went wrong';btn.disabled=false;btn.textContent='Claim Package';return}
+    if(data.letter_id){const el=document.getElementById('letterId');el.textContent='Letter ID: '+data.letter_id;el.style.display='block'}
+    goToStep(3);
+  }catch(e){err.textContent='Connection error';showToast('Network error',false)}
+  finally{btn.disabled=false;btn.textContent='Claim Package'}
+}
+
+document.getElementById('codeInput').addEventListener('keydown',e=>{if(e.key==='Enter')validateCode()});
+</script>
+</body>
+</html>

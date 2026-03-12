@@ -1,0 +1,16 @@
+{
+  "name": "codes",
+  "version": "1.0.0",
+  "description": "CODES - Code redemption and fulfillment backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.37.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^4.18.2",
+    "node-fetch": "^2.7.0"
+  }
+}
