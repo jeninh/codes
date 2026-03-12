@@ -162,6 +162,11 @@ app.post('/api/redeem', rateLimit('redeem', 5, 600000), async (req, res) => {
     }
   }
 
+  // Validate country is a 2-letter code
+  if (!/^[A-Za-z]{2}$/.test(country)) {
+    return res.status(400).json({ error: 'Country must be a valid 2-letter code' });
+  }
+
   const codes = await readCodes();
   const upperCode = code.toUpperCase();
   const entry = codes[upperCode];

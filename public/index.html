@@ -168,7 +168,9 @@ input:focus,select:focus{border-color:#444}
             <option value="MX">Mexico</option><option value="IN">India</option><option value="NL">Netherlands</option>
             <option value="SE">Sweden</option><option value="NO">Norway</option><option value="NZ">New Zealand</option>
             <option value="SG">Singapore</option><option value="IT">Italy</option><option value="ES">Spain</option>
+            <option value="OTHER">Other…</option>
           </select>
+          <input type="text" id="countryCustom" maxlength="2" placeholder="XX" style="display:none;margin-top:8px;text-transform:uppercase;font-family:var(--mono);letter-spacing:2px;text-align:center">
         </div>
       </div>
       <div class="error-msg" id="shippingError"></div>
@@ -225,7 +227,10 @@ async function validateCode(){
 
 async function submitRedeem(){
   const btn=document.getElementById('claimBtn'),err=document.getElementById('shippingError');
-  const f={firstName:document.getElementById('firstName').value.trim(),lastName:document.getElementById('lastName').value.trim(),email:document.getElementById('email').value.trim(),address1:document.getElementById('address1').value.trim(),address2:document.getElementById('address2').value.trim(),city:document.getElementById('city').value.trim(),state:document.getElementById('state').value.trim(),postalCode:document.getElementById('postalCode').value.trim(),country:document.getElementById('country').value};
+  const countryVal=document.getElementById('country').value;
+  const country=countryVal==='OTHER'?document.getElementById('countryCustom').value.trim().toUpperCase():countryVal;
+  const f={firstName:document.getElementById('firstName').value.trim(),lastName:document.getElementById('lastName').value.trim(),email:document.getElementById('email').value.trim(),address1:document.getElementById('address1').value.trim(),address2:document.getElementById('address2').value.trim(),city:document.getElementById('city').value.trim(),state:document.getElementById('state').value.trim(),postalCode:document.getElementById('postalCode').value.trim(),country};
+  if(countryVal==='OTHER'&&!/^[A-Z]{2}$/.test(country)){err.textContent='Please enter a valid 2-letter country code';return}
   for(const k of['firstName','lastName','address1','city','state','postalCode']){if(!f[k]){err.textContent='Please fill in all required fields';return}}
   err.textContent='';btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Submitting';
   try{
@@ -239,6 +244,8 @@ async function submitRedeem(){
 }
 
 document.getElementById('codeInput').addEventListener('keydown',e=>{if(e.key==='Enter')validateCode()});
+document.getElementById('country').addEventListener('change',function(){document.getElementById('countryCustom').style.display=this.value==='OTHER'?'block':'none'});
+document.getElementById('countryCustom').addEventListener('input',function(){this.value=this.value.replace(/[^a-zA-Z]/g,'')});
 </script>
 </body>
 </html>
